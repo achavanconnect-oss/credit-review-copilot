@@ -26,6 +26,9 @@ import guardrails
 MAX_ATTEMPTS = 3          # ungrounded answers tolerated before escalating
 MAX_SEARCHES = 4          # retrieval steps per question
 MEMORY_MAX_DISTANCE = 0.10
+# Remembered findings expire (default 7 days) so a stale answer is not reused after the filing set changes.
+# Also use a new `doc` id whenever the underlying filing changes.
+MEMORY_TTL_S = float(os.getenv("MEMORY_TTL_S", 7 * 24 * 3600))
 
 # Requests for a decision or a rating are outside this tool's remit: always a human's call.
 DECISION_REQUEST = re.compile(
@@ -84,7 +87,7 @@ def build_agent(store, embed: Callable, llm_json: Callable, checkpointer=None):
         return {"steps": add(state, "guard: ok")}
 
     def recall(state):
-        hit = store.recall(state["doc"], embed([state["question"]])[0], MEMORY_MAX_DISTANCE)
+        hit = store.recall(state["doc"], embed([state["question"]])[0], MEMORY_MAX_DISTANCE, MEMORY_TTL_S)
         if hit:
             return {"status": "done", "source": "memory", "items": hit["answer"]["items"],
                     "steps": add(state, f"recall: hit (distance {hit['distance']:.3f})")}

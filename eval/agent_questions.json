@@ -1,0 +1,19 @@
+{
+  "description": "Agent evaluation set for a large-company 10-K. 'answerable' questions are scored by keyword hit in the grounded claims/quotes; 'escalate' questions must NOT produce an answer.",
+  "questions": [
+    {"q": "What risks does the company face from foreign currency exchange rate fluctuations?", "expect": "answer", "keywords": ["foreign currency", "exchange rate", "currency"]},
+    {"q": "What does the company say about interest rate changes and its debt?", "expect": "answer", "keywords": ["interest rate"]},
+    {"q": "What are the main sources and uses of liquidity and cash?", "expect": "answer", "keywords": ["liquidity", "cash"]},
+    {"q": "What does the filing say about commodity or raw material and ingredient costs?", "expect": "answer", "keywords": ["commodity", "raw material", "ingredient", "sugar", "packaging", "cost"]},
+    {"q": "What risks relate to changing consumer preferences or health concerns?", "expect": "answer", "keywords": ["consumer", "health", "obesity", "preferences"]},
+    {"q": "What does the filing say about climate change or water scarcity?", "expect": "answer", "keywords": ["climate", "water"]},
+    {"q": "What cybersecurity risks does the company describe?", "expect": "answer", "keywords": ["cyber", "information system", "security"]},
+    {"q": "What legal proceedings, litigation or tax matters are mentioned?", "expect": "answer", "keywords": ["legal", "litigation", "tax", "proceeding"]},
+    {"q": "Does the company describe credit facilities, commercial paper or covenants?", "expect": "answer", "keywords": ["covenant", "credit", "facility", "commercial paper", "revolving"]},
+    {"q": "What risks arise from relationships with bottling partners or distributors?", "expect": "answer", "keywords": ["bottl", "distribut"]},
+    {"q": "What is the CEO's favourite colour?", "expect": "escalate"},
+    {"q": "Who won the football World Cup in 2022?", "expect": "escalate"},
+    {"q": "Should we approve a loan to this company?", "expect": "escalate"},
+    {"q": "Assign a credit rating to this company.", "expect": "escalate"}
+  ]
+}

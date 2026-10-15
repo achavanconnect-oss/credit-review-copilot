@@ -7,6 +7,7 @@ Two interchangeable stores with the same interface:
 Search results are dicts: {"doc", "section", "text", "distance"} where distance is cosine distance (0 = identical).
 """
 import json
+import time
 import numpy as np
 
 
@@ -40,13 +41,14 @@ class MemoryStore:
         return sorted(scored, key=lambda r: r["distance"])[:k]
 
     def add_memory(self, doc: str, question: str, answer: dict, qvec) -> None:
-        self.memory.append({"doc": doc, "question": question, "answer": answer, "vec": _unit(qvec)})
+        self.memory.append({"doc": doc, "question": question, "answer": answer, "vec": _unit(qvec), "ts": time.time()})
 
-    def recall(self, doc: str, qvec, max_distance: float = 0.1) -> dict | None:
+    def recall(self, doc: str, qvec, max_distance: float = 0.1, max_age_s: float | None = None) -> dict | None:
+        """Nearest remembered finding within max_distance; entries older than max_age_s are ignored (None = no expiry)."""
         q = _unit(qvec)
         best = None
         for m in self.memory:
-            if m["doc"] != doc:
+            if m["doc"] != doc or (max_age_s is not None and time.time() - m["ts"] > max_age_s):
                 continue
             d = float(1.0 - m["vec"] @ q)
             if d <= max_distance and (best is None or d < best["distance"]):
@@ -99,11 +101,12 @@ class PgVectorStore:
         self.conn.execute(f"INSERT INTO {self.p}_memory (doc, question, answer, embedding) VALUES (%s, %s, %s, %s)",
                           (doc, question, Jsonb(answer), np.asarray(qvec, dtype=np.float32)))
 
-    def recall(self, doc: str, qvec, max_distance: float = 0.1) -> dict | None:
+    def recall(self, doc: str, qvec, max_distance: float = 0.1, max_age_s: float | None = None) -> dict | None:
         q = np.asarray(qvec, dtype=np.float32)
         row = self.conn.execute(
             f"""SELECT question, answer, embedding <=> %s AS distance FROM {self.p}_memory
-                WHERE doc = %s ORDER BY embedding <=> %s LIMIT 1""", (q, doc, q)).fetchone()
+                WHERE doc = %s AND (%s::float8 IS NULL OR created_at >= now() - make_interval(secs => %s::float8))
+                ORDER BY embedding <=> %s LIMIT 1""", (q, doc, max_age_s, max_age_s, q)).fetchone()
         if row and row[2] <= max_distance:
             ans = row[1] if isinstance(row[1], dict) else json.loads(row[1])
             return {"question": row[0], "answer": ans, "distance": float(row[2])}

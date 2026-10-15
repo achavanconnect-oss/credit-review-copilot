@@ -32,6 +32,35 @@ Extraction accuracy is scored against SEC XBRL ground truth (`eval_extraction.py
 **Conclusion:** numbers come from XBRL; the model only describes them, and every quote must exist in the filing.
 A human signs off.
 
+## Agent mode (LangGraph + pgvector)
+
+`tools/credit_agent.py` turns the pipeline into a ReAct-style agent built on LangGraph:
+
+```
+start -> guard -> recall -> plan <-> search
+                              \-> answer -> verify -> (plan | finalize)
+```
+
+- **Plan / act / observe:** the LLM chooses `search` (query + optional 10-K Item), `answer`, or `escalate`; each search result is an observation fed back into the next plan.
+- **Deterministic limits on the model:** it cannot answer before searching, search budget is capped (4), and answers are only accepted if every kept claim has a verbatim quote found in the retrieved text.
+- **Escalation to a human:** rating or lending-decision requests are refused before any LLM call; repeated ungrounded answers, or a planner that finds no evidence, end as `escalated` with a reason.
+- **Memory:** short-term via a LangGraph checkpointer (`thread_id` keeps per-conversation history); long-term via the vector store, where verified findings are saved and near-identical questions are answered from memory with no LLM call.
+- **Vector store:** `tools/vector_store.py` has `PgVectorStore` (PostgreSQL + pgvector, cosine distance, HNSW index, SQL section filter) and an in-memory `MemoryStore` with the same interface.
+
+```bash
+# in-memory (no database), local Ollama models
+python tools/credit_agent.py ask KO .tmp/filings/KO.htm "What are the main debt and liquidity risks?"
+
+# with pgvector
+docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres pgvector/pgvector:pg16
+set DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres
+python tools/credit_agent.py ask KO .tmp/filings/KO.htm "What are the main debt and liquidity risks?"
+```
+
+Tests (`pytest`) cover the agent with a scripted LLM (grounding, replanning, escalation, budget caps, memory, thread isolation)
+and run the same store tests against both stores. The pgvector tests are skipped without `DATABASE_URL`; GitHub Actions runs them against a
+`pgvector/pgvector:pg16` service container.
+
 ## Limitations
 Large US companies only, two fiscal years each, one local 7B model, public data. Not credit or investment advice.
 

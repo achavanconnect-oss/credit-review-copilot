@@ -4,3 +4,7 @@ beautifulsoup4
 lxml
 python-dotenv
 anthropic
+langgraph
+psycopg[binary]
+pgvector
+pytest

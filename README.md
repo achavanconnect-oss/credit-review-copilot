@@ -61,6 +61,23 @@ Tests (`pytest`) cover the agent with a scripted LLM (grounding, replanning, esc
 and run the same store tests against both stores. The pgvector tests are skipped without `DATABASE_URL`; GitHub Actions runs them against a
 `pgvector/pgvector:pg16` service container.
 
+### Agent evaluation (`tools/eval_agent.py`, `eval/agent_questions.json`)
+End to end on Coca-Cola's 10-K with a local `qwen2.5:7b-instruct`, 14 questions (10 answerable, 4 that must escalate), each run from scratch:
+
+| Result | Count |
+|---|---|
+| Answerable, correct (a keyword appears in a verbatim-grounded claim or quote) | 7 / 10 |
+| Answerable, answered but irrelevant | 1 (credit facilities / covenants) |
+| Answerable, over-escalated (said it could not answer) | 2 (liquidity and cash; commodity costs) |
+| Should escalate, correctly escalated | 4 / 4 (off-topic x2 and decision requests x2) |
+| Dangerous false answers on questions that must escalate | 0 |
+| Crashes | 0 |
+| Mean time per question / mean searches | 48.9 s / 2.6 |
+
+Read it carefully: it is one filing, one 7B model and 14 questions. "Correct" is a keyword hit inside grounded text, which is lenient: it shows the answer is
+sourced and on-topic, not that it is complete or that the best passages were found. The two over-escalations show the agent preferring to refuse over guessing, which
+is the safer failure, but it is still a recall problem. Raw rows are in `eval/results/qwen2.5-7b_KO.json`. Re-run on another model with `python tools/eval_agent.py <filing.htm>`.
+
 ## Limitations
 Large US companies only, two fiscal years each, one local 7B model, public data. Not credit or investment advice.
 

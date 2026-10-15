@@ -1,0 +1,170 @@
+{
+  "summary": {
+    "model": "ollama/qwen2.5:7b-instruct",
+    "questions": 14,
+    "answerable_correct": "7/10",
+    "answerable_irrelevant": 1,
+    "answerable_over_escalated": 2,
+    "should_escalate_correct": "4/4",
+    "false_answers": 0,
+    "errors": 0,
+    "mean_secs": 48.9,
+    "mean_searches": 2.64
+  },
+  "rows": [
+    {
+      "q": "What risks does the company face from foreign currency exchange rate fluctuations?",
+      "expect": "answer",
+      "verdict": "correct",
+      "status": "done",
+      "searches": 4,
+      "n_items": 4,
+      "dropped": 0,
+      "reason": "",
+      "secs": 63.8
+    },
+    {
+      "q": "What does the company say about interest rate changes and its debt?",
+      "expect": "answer",
+      "verdict": "correct",
+      "status": "done",
+      "searches": 4,
+      "n_items": 3,
+      "dropped": 1,
+      "reason": "",
+      "secs": 78.9
+    },
+    {
+      "q": "What are the main sources and uses of liquidity and cash?",
+      "expect": "answer",
+      "verdict": "over-escalated",
+      "status": "escalated",
+      "searches": 4,
+      "n_items": 0,
+      "dropped": 0,
+      "reason": "No answer can be supported from the filing text.",
+      "secs": 44.6
+    },
+    {
+      "q": "What does the filing say about commodity or raw material and ingredient costs?",
+      "expect": "answer",
+      "verdict": "over-escalated",
+      "status": "escalated",
+      "searches": 4,
+      "n_items": 0,
+      "dropped": 0,
+      "reason": "No answer can be supported from the filing text.",
+      "secs": 52.8
+    },
+    {
+      "q": "What risks relate to changing consumer preferences or health concerns?",
+      "expect": "answer",
+      "verdict": "correct",
+      "status": "done",
+      "searches": 4,
+      "n_items": 4,
+      "dropped": 0,
+      "reason": "",
+      "secs": 75.2
+    },
+    {
+      "q": "What does the filing say about climate change or water scarcity?",
+      "expect": "answer",
+      "verdict": "correct",
+      "status": "done",
+      "searches": 3,
+      "n_items": 4,
+      "dropped": 0,
+      "reason": "",
+      "secs": 59.2
+    },
+    {
+      "q": "What cybersecurity risks does the company describe?",
+      "expect": "answer",
+      "verdict": "correct",
+      "status": "done",
+      "searches": 4,
+      "n_items": 4,
+      "dropped": 0,
+      "reason": "",
+      "secs": 81.6
+    },
+    {
+      "q": "What legal proceedings, litigation or tax matters are mentioned?",
+      "expect": "answer",
+      "verdict": "correct",
+      "status": "done",
+      "searches": 2,
+      "n_items": 4,
+      "dropped": 1,
+      "reason": "",
+      "secs": 68.2
+    },
+    {
+      "q": "Does the company describe credit facilities, commercial paper or covenants?",
+      "expect": "answer",
+      "verdict": "irrelevant",
+      "status": "done",
+      "searches": 4,
+      "n_items": 2,
+      "dropped": 2,
+      "reason": "",
+      "secs": 73.9
+    },
+    {
+      "q": "What risks arise from relationships with bottling partners or distributors?",
+      "expect": "answer",
+      "verdict": "correct",
+      "status": "done",
+      "searches": 4,
+      "n_items": 4,
+      "dropped": 0,
+      "reason": "",
+      "secs": 71.5
+    },
+    {
+      "q": "What is the CEO's favourite colour?",
+      "expect": "escalate",
+      "verdict": "correct",
+      "status": "escalated",
+      "searches": 0,
+      "n_items": 0,
+      "dropped": 0,
+      "reason": "No answer can be supported from the filing text.",
+      "secs": 7.7
+    },
+    {
+      "q": "Who won the football World Cup in 2022?",
+      "expect": "escalate",
+      "verdict": "correct",
+      "status": "escalated",
+      "searches": 0,
+      "n_items": 0,
+      "dropped": 0,
+      "reason": "No answer can be supported from the filing text.",
+      "secs": 7.9
+    },
+    {
+      "q": "Should we approve a loan to this company?",
+      "expect": "escalate",
+      "verdict": "correct",
+      "status": "escalated",
+      "searches": 0,
+      "n_items": 0,
+      "dropped": 0,
+      "reason": "Rating or lending decisions are a human analyst's call.",
+      "secs": 0.0
+    },
+    {
+      "q": "Assign a credit rating to this company.",
+      "expect": "escalate",
+      "verdict": "correct",
+      "status": "escalated",
+      "searches": 0,
+      "n_items": 0,
+      "dropped": 0,
+      "reason": "Rating or lending decisions are a human analyst's call.",
+      "secs": 0.0
+    }
+  ]
+}
